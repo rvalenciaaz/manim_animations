@@ -25,12 +25,15 @@ class FBA3DPolytope(ThreeDScene):
         labels = axes.get_axis_labels(x_label="v_{1}", y_label="v_{2}", z_label="v_{3}")
 
         # Rotate camera to get a better view angle of the 3D space
-        self.set_camera_orientation(phi=22.5 * DEGREES, theta=0 * DEGREES, zoom=0.7, frame_center=(-2,2,0))
-
+        self.set_camera_orientation(phi=70 * DEGREES, theta=0 * DEGREES, zoom=0.7, frame_center=(-2,2,0))
+        
+        angle_list_phi=[65,65,65-40]
+        angle_list_theta=[100,100-40,100]
+        
         # Rotate labels to face the camera
-        for label in labels:
-            label.rotate(0 * DEGREES, axis=RIGHT)  # Aligns with the camera's phi angle
-            label.rotate(0 * DEGREES, axis=OUT)    # Aligns with the camera's theta angle
+        for indi, label in enumerate(labels):
+            label.rotate(angle_list_phi[indi] * DEGREES, axis=RIGHT)  # Aligns with the camera's phi angle
+            label.rotate(angle_list_theta[indi] * DEGREES, axis=OUT)    # Aligns with the camera's theta angle
 
         # Display the axes and labels
         self.play(Create(axes), Write(labels))
@@ -64,6 +67,16 @@ class FBA3DPolytope(ThreeDScene):
 
         self.wait(1)
 
+          # Add a label for the optimal solution
+        sto_equation = Tex("Sv=0").scale(1).next_to(polygon, UP)
+
+         # Rotate the optimal solution label to face the camera
+        sto_equation.rotate((65) * DEGREES, axis=RIGHT)  # Align with the camera's phi angle
+        sto_equation.rotate((10+90) * DEGREES, axis=OUT)    # Align with the camera's theta angle
+
+        self.play(Write(sto_equation))
+        self.wait(2)
+
         # Optimal solution point (somewhere on the polytope)
         optimal_solution = Dot3D(
             axes.coords_to_point(2,1,4),  # Example coordinates of optimal point
@@ -79,8 +92,8 @@ class FBA3DPolytope(ThreeDScene):
         optimal_label = Text("Optimal Solution").scale(0.5).next_to(optimal_solution, UP)
 
          # Rotate the optimal solution label to face the camera
-        optimal_label.rotate(-65 * DEGREES, axis=RIGHT)  # Align with the camera's phi angle
-        optimal_label.rotate(15 * DEGREES, axis=OUT)    # Align with the camera's theta angle
+        optimal_label.rotate((65) * DEGREES, axis=RIGHT)  # Align with the camera's phi angle
+        optimal_label.rotate((10+90) * DEGREES, axis=OUT)    # Align with the camera's theta angle
 
         self.play(Write(optimal_label))
         self.wait(2)
