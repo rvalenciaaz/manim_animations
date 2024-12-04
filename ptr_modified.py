@@ -4,73 +4,101 @@ import numpy as np
 class ShortReadSimulationScene(Scene):
     def construct(self):
         # Title
-        title = Text("Short Read Simulation Algorithm").to_edge(UP)
+        title = Text("Peak-to-trough ratio and growth rates").to_edge(UP)
         self.play(Write(title))
         self.wait(1)
 
         # Circular genome representation
-        genome_circle = Circle(radius=3)
-        genome_label = Text("Circular Genome", font_size=24).next_to(genome_circle, UP)
+        genome_circle = Circle(radius=2).shift(DOWN * 0.5)  
+        genome_label = Text("(Circular) Bacterial Genome", font_size=24).next_to(genome_circle, UP).shift(UP * 0.5)  
         self.play(Create(genome_circle), FadeIn(genome_label))
         self.wait(1)
 
-        # Parameters
-        num_bins = 360
-        ptr_value = 2  # PTR = 2
-        ori_bin = 0  # Origin at bin 0
-        ter_bin = (ori_bin + num_bins // 2) % num_bins
+        # Animation of genome replication from ori to ter in the circular genome
+        # Mark origin and terminus on the circle
+        ori_point = genome_circle.point_at_angle(PI / 2)
+        ter_point = genome_circle.point_at_angle(-PI / 2)
 
-        # Compute adjusted probabilities
-        def compute_adjusted_probabilities(num_bins, ori_bin, ter_bin, ptr_value):
-            adj_probs = []
-            for i in range(num_bins):
-                if ori_bin < ter_bin:
-                    if i < ori_bin:
-                        prob = ptr_value ** (- (ori_bin - i) / (ori_bin - ter_bin))
-                    elif ori_bin <= i <= ter_bin:
-                        prob = ptr_value ** ((i - ori_bin) / (ter_bin - ori_bin))
-                    else:
-                        prob = ptr_value ** (- (i - ter_bin) / (num_bins - ter_bin + ori_bin))
-                else:
-                    if i <= ter_bin:
-                        prob = ptr_value ** (- (i - ter_bin) / (num_bins - ori_bin + ter_bin))
-                    elif ter_bin < i < ori_bin:
-                        prob = ptr_value ** ((i - ter_bin) / (ori_bin - ter_bin))
-                    else:
-                        prob = ptr_value ** (- (ori_bin - i) / (num_bins - ori_bin + ter_bin))
-                adj_probs.append(prob)
-            # Normalize probabilities
-            total_prob = sum(adj_probs)
-            adj_probs = [p / total_prob for p in adj_probs]
-            return adj_probs
-
-        adj_probs = compute_adjusted_probabilities(num_bins, ori_bin, ter_bin, ptr_value)
-
-        # Simulate reads
-        num_reads = 1000
-        bins = np.arange(num_bins)
-        read_bins = np.random.choice(bins, size=num_reads, p=adj_probs)
-        angles = read_bins / num_bins * 2 * np.pi
-
-        # Display reads as dots around the circle
-        radius = 3
-        read_dots = VGroup()
-        for angle in angles:
-            x = radius * np.cos(angle)
-            y = radius * np.sin(angle)
-            dot = Dot(point=[x, y, 0], radius=0.02, color=YELLOW)
-            read_dots.add(dot)
-        self.play(*[FadeIn(dot) for dot in read_dots])
+        # Add labels for origin and terminus
+        ori_label = Text("oriC", font_size=20, color=GREEN).next_to(ori_point, UP)
+        ter_label = Text("terC", font_size=20, color=RED).next_to(ter_point, DOWN)
+        self.play(FadeIn(ori_label), FadeIn(ter_label))
         self.wait(1)
 
-        # Label
-        reads_label = Text("Reads Distributed Around the Genome", font_size=24)
-        reads_label.next_to(genome_circle, DOWN)
-        self.play(Write(reads_label))
+        # Replication forks
+        angle_tracker = ValueTracker(0)
+
+        def get_fork1():
+            return Arc(radius=2, start_angle=PI / 2, angle=-angle_tracker.get_value(), color=YELLOW, stroke_width=10).shift(DOWN * 0.5) 
+
+        def get_fork2():
+            return Arc(radius=2, start_angle=PI / 2, angle=angle_tracker.get_value(), color=YELLOW, stroke_width=10).shift(DOWN * 0.5) 
+
+        fork1 = always_redraw(get_fork1)
+        fork2 = always_redraw(get_fork2)
+
+        self.play(Create(fork1), Create(fork2))
+        self.wait(1)
+
+        # Animate the forks moving to the terminus
+        self.play(angle_tracker.animate.set_value(PI), run_time=3)
+        self.wait(1)
+
+        self.play(FadeOut(title), FadeOut(genome_label))
+        self.wait(0.1)
+
+        # Move original genome to the upper left corner
+        genomes = VGroup(genome_circle, ori_label, ter_label, fork1, fork2)
+        self.play(
+            genomes.animate.scale(0.5).to_corner(UL),
+        )
+        self.wait(1)
+
+        # Create multiple genomes in a grid spanning the screen
+        genomes_group = VGroup()
+        rows, cols = 3, 3  # Adjusted grid size for better screen coverage
+
+        x_positions = np.linspace(-6, 6, cols)
+        y_positions = np.linspace(3, -3, rows)
+
+        for row in range(rows):
+            for col in range(cols):
+                x_pos = x_positions[col]
+                y_pos = y_positions[row]
+                genome_copy = genomes.copy().move_to([x_pos, y_pos, 0])
+                genomes_group.add(genome_copy)
+
+        # Animate each genome copy appearing in sequence (long generation time)
+        self.play(
+            *[FadeIn(genome_copy, run_time=0.3) for genome_copy in genomes_group],
+            lag_ratio=0.5  # Controls delay between each appearance for replication effect
+        )
+        self.wait(1)
+
+        # Animate each genome copy appearing in sequence (short generation time)
+        # Create more genomes to represent faster replication
+        genomes_group_short = VGroup()
+        rows_short, cols_short = 5, 5  # Larger grid for short generation time
+
+        x_positions_short = np.linspace(-6, 6, cols_short)
+        y_positions_short = np.linspace(3, -3, rows_short)
+
+        for row in range(rows_short):
+            for col in range(cols_short):
+                x_pos = x_positions_short[col]
+                y_pos = y_positions_short[row]
+                genome_copy = genomes.copy().move_to([x_pos, y_pos, 0])
+                genomes_group_short.add(genome_copy)
+
+        # Animate genomes appearing quickly
+        self.play(
+            *[FadeIn(genome_copy, run_time=0.1) for genome_copy in genomes_group_short],
+            lag_ratio=0.05  # Faster appearance for short generation time
+        )
         self.wait(1)
 
         # Fade out circular genome and reads
-        self.play(FadeOut(VGroup(genome_circle, genome_label, read_dots, reads_label)))
+        self.play(FadeOut(VGroup(genomes_group, genomes_group_short, genomes)))
         self.wait(1)
 
         # Proceed to the binning and coverage calculation
@@ -80,6 +108,7 @@ class ShortReadSimulationScene(Scene):
         self.play(Create(genome_line), FadeIn(genome_label))
         self.wait(1)
 
+        
         # Divide genome into bins
         num_bins = 12
         bin_lines = VGroup()
@@ -129,7 +158,7 @@ class ShortReadSimulationScene(Scene):
         self.wait(1)
 
         # Calculate adjusted probabilities
-        adj_probs = compute_adjusted_probabilities(num_bins, ori_bin, ter_bin, ptr_value)
+        adj_probs = self.compute_adjusted_probabilities(num_bins, ori_bin, ter_bin, ptr_value)
 
         # Display bars representing probabilities
         prob_bars = VGroup()
@@ -225,7 +254,7 @@ class ShortReadSimulationScene(Scene):
         self.wait(1)
 
         # Recalculate adjusted probabilities
-        adj_probs = compute_adjusted_probabilities(num_bins, ori_bin, ter_bin, ptr_value)
+        adj_probs = self.compute_adjusted_probabilities(num_bins, ori_bin, ter_bin, ptr_value)
 
         # Display new probability bars
         prob_bars = VGroup()
@@ -276,3 +305,19 @@ class ShortReadSimulationScene(Scene):
             ter_indicator, ter_label, prob_bars, coverage_line, coverage_bars, conclusion_text, title
         )))
         self.wait(1)
+
+    def compute_adjusted_probabilities(self, num_bins, ori_bin, ter_bin, ptr_value):
+        # Compute adjusted probabilities based on copy number
+        adj_probs = []
+        for i in range(num_bins):
+            # Compute angle between bin i and ori_bin
+            angle = abs((i - ori_bin) % num_bins) * (2 * np.pi / num_bins)
+            if angle > np.pi:
+                angle = 2 * np.pi - angle
+            # Copy number decreases linearly from PTR at ori to 1 at ter
+            copy_number = 1 + (ptr_value - 1) * (1 - angle / np.pi)
+            adj_probs.append(copy_number)
+        # Normalize probabilities
+        total = sum(adj_probs)
+        adj_probs = [prob / total for prob in adj_probs]
+        return adj_probs

@@ -1,0 +1,12 @@
+# This file is used internally by FFMPEG.
+file 'file:/home/rgvalenciaalbornoz/GIT_FOLDER/manim_animations/media/videos/presentation_101124_2/1080p60/partial_movie_files/OmicsIntegration/3529212410_3197028788_223132457.mp4'
+file 'file:/home/rgvalenciaalbornoz/GIT_FOLDER/manim_animations/media/videos/presentation_101124_2/1080p60/partial_movie_files/OmicsIntegration/3040924799_2919340033_3957158629.mp4'
+file 'file:/home/rgvalenciaalbornoz/GIT_FOLDER/manim_animations/media/videos/presentation_101124_2/1080p60/partial_movie_files/OmicsIntegration/3040924799_2840390503_231802762.mp4'
+file 'file:/home/rgvalenciaalbornoz/GIT_FOLDER/manim_animations/media/videos/presentation_101124_2/1080p60/partial_movie_files/OmicsIntegration/3040924799_3074249527_1480023465.mp4'
+file 'file:/home/rgvalenciaalbornoz/GIT_FOLDER/manim_animations/media/videos/presentation_101124_2/1080p60/partial_movie_files/OmicsIntegration/3040924799_2919340033_3703852280.mp4'
+file 'file:/home/rgvalenciaalbornoz/GIT_FOLDER/manim_animations/media/videos/presentation_101124_2/1080p60/partial_movie_files/OmicsIntegration/3040924799_3536284033_1666875716.mp4'
+file 'file:/home/rgvalenciaalbornoz/GIT_FOLDER/manim_animations/media/videos/presentation_101124_2/1080p60/partial_movie_files/OmicsIntegration/3040924799_2919340033_250068051.mp4'
+file 'file:/home/rgvalenciaalbornoz/GIT_FOLDER/manim_animations/media/videos/presentation_101124_2/1080p60/partial_movie_files/OmicsIntegration/3040924799_2701852896_531238837.mp4'
+file 'file:/home/rgvalenciaalbornoz/GIT_FOLDER/manim_animations/media/videos/presentation_101124_2/1080p60/partial_movie_files/OmicsIntegration/3040924799_2919340033_161691644.mp4'
+file 'file:/home/rgvalenciaalbornoz/GIT_FOLDER/manim_animations/media/videos/presentation_101124_2/1080p60/partial_movie_files/OmicsIntegration/3040924799_1356734870_2063630876.mp4'
+file 'file:/home/rgvalenciaalbornoz/GIT_FOLDER/manim_animations/media/videos/presentation_101124_2/1080p60/partial_movie_files/OmicsIntegration/3040924799_784179552_3975076940.mp4'
