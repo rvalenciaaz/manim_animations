@@ -9,4 +9,4 @@
 #manim -pqh presentation_101124_3.py ExperimentalAI -o presentation_101124_3.mp4
 
 #manim -pqh gp_animation_2.py GaussianProcessVisualization -o gp_animation.mp4
-manim -pqh ms_explanation.py MassSpectrometryAnimation -o ms_explanation.mp4
+manim -pqh ms_explanation_sharp_2.py MassSpectrometryAnimation -o ms_explanation.mp4
